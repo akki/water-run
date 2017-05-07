@@ -1,5 +1,5 @@
 var mapDimX = 20;
-var mapDimY = 40;
+var mapDimY = 60;
 
 var TILE_WIDTH = 32;
 var TILE_HEIGHT = 29;
@@ -20,7 +20,9 @@ var currentCheckpointArea = 1;
 
 var player, object, powerLevel = 0;
 
-var map, mapLayer, droplets;
+var facing = 'idle';
+
+var map, mapLayer, droplets, currentTimer;
 
 var music;
 
@@ -31,25 +33,38 @@ function preload() {
   game.stage.backgroundColor = '#037A88';
 
   game.load.image('background', 'img/background.png');
+  game.load.image('pnacza', 'img/pnacza.png');
   game.load.image('ground', 'img/ground.png');
-  game.load.image('player', 'img/brick.png');
+  game.load.spritesheet('player', 'img/player.png', 64, 34);
   game.load.image('windows', 'img/windows.png');
-  game.load.spritesheet('audio-control', 'img/button-sound.png', 80, 80)
+
+  game.load.spritesheet('audio-control', 'img/button-sound.png', 80, 80);
+  game.load.spritesheet('cloud', 'img/clouds.png', 153, 58);
   game.load.image('droplet', 'img/droplet.png');
 
   game.load.audio('level01', ['music/level01.mp3', 'music/level01.ogg']);
 }
 
 function create() {
-  game.add.sprite(0, 0, 'background');
-  game.add.sprite(0, 292, 'ground');
+  var background = game.add.sprite(0, 0, 'background');
+  background.fixedToCamera = true;
+
+  game.add.tileSprite(0, 0, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT * mapDimY, 'pnacza');
+
+  for (var i = 0; i < 3; i++) {
+    var cloud = game.add.sprite(60, 150*(2*i+1), 'cloud', 0);
+    cloud.fixedToCamera = true;
+
+    cloud = game.add.sprite(400, 150*(2*i+2), 'cloud', 1);
+    cloud.fixedToCamera = true;
+  };
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
-  createPowerLevelText();
-  createScoreText();
   droplets = game.add.group();
   createMap();
+  createPowerLevelText();
+  createScoreText();
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 
@@ -63,7 +78,6 @@ function create() {
 }
 
 function clickMusic() {
-  console.log("clickMusic")
   if (music.paused) {
     music.resume();
   } else {
@@ -87,10 +101,22 @@ function update() {
   });
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+    if (facing != 'left') {
+      facing = 'left';
+      player.animations.play('left');
+    }
     player.body.velocity.x = -250;
   } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+    if (facing != 'right') {
+      facing = 'right';
+      player.animations.play('right');
+    }
     player.body.velocity.x = 250;
   } else {
+    if (facing != 'idle') {
+      facing = 'idle';
+      player.animations.play('idle');
+    }
     player.body.velocity.x = 0;
   }
 
@@ -108,7 +134,7 @@ function update() {
 
 function checkpointIsCrossed(){
   var currentPlayerTileYPosition = mapDimY - mapLayer.getTileY(player.body.position.y);
-  if(currentPlayerTileYPosition > TILES_IN_ONE_CHECKPOINT_AREA * currentCheckpointArea){
+  if(currentPlayerTileYPosition >= TILES_IN_ONE_CHECKPOINT_AREA * currentCheckpointArea){
     currentCheckpointArea++;
     return true;
   }
@@ -121,11 +147,15 @@ function updateScore(scores){
 }
 
 function spawnPlayer() {
-  player = game.add.sprite(game.world.CenterX, TILE_HEIGHT*(mapDimY-1), 'player');
+  player = game.add.sprite(game.world.CenterX, TILE_HEIGHT*(mapDimY-1.5), 'player');
   player.anchor.set(0.5);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = 600;
   player.body.collideWorldBounds = true;
+  player.animations.add('idle', [6], 20, true);
+  player.animations.add('left', [5, 4, 3, 2, 1, 0], 5, false);
+  player.animations.add('right', [8, 9, 10, 11, 12, 13], 5, false);
+  player.animations.play('idle');
 }
 
 function createPowerLevelText(){
@@ -153,7 +183,7 @@ function createMap() {
   var WINDOW = 0;
   var lastStart = 0;
   var lastEnd = 0;
-  for (var i = 0; i < mapDimY - 2; i++) {
+  for (var i = 2; i < mapDimY - 2; i = i+2) {
     var startPositionX;
     var leafLength = game.rnd.integerInRange(5, 7);
     do {
@@ -170,9 +200,7 @@ function createMap() {
       // Generate a droplet.
       var posX = game.rnd.integerInRange(startPositionX, startPositionX + leafLength - 1);
       var posY = i*2 - 1;
-      droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT, 'droplet');
-      game.physics.enable(droplet, Phaser.Physics.ARCADE);
-      droplets.add(droplet);
+      AddDroplet(posX, posY);
     }
 
     lastStart = startPositionX;
@@ -183,4 +211,10 @@ function createMap() {
   for (var j = 0; j < mapDimX; j++) {
     map.putTile(WINDOW, j, mapDimY - 1, mapLayer);
   }
+}
+
+function AddDroplet(posX, posY){
+      droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT, 'droplet');
+      game.physics.enable(droplet, Phaser.Physics.ARCADE);
+      droplets.add(droplet);
 }
