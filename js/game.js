@@ -108,13 +108,13 @@ function update() {
       facing = 'left';
       player.animations.play('left');
     }
-    player.body.velocity.x = -250;
+    player.body.velocity.x = -450;
   } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
     if (facing != 'right') {
       facing = 'right';
       player.animations.play('right');
     }
-    player.body.velocity.x = 250;
+    player.body.velocity.x = 450;
   } else {
     if (facing != 'idle') {
       facing = 'idle';
@@ -124,7 +124,7 @@ function update() {
   }
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.onFloor() && powerLevel == MAX_POWER_LEVEL) {
-    player.body.velocity.y = -450;
+    player.body.velocity.y = -700;
     powerLevel = 0;
     powerLevelText.setText(powerLevel);
   }
@@ -153,7 +153,7 @@ function spawnPlayer() {
   player = game.add.sprite(game.world.CenterX, TILE_HEIGHT*(mapDimY-2.5), 'player');
   player.anchor.set(0.5);
   game.physics.enable(player, Phaser.Physics.ARCADE);
-  player.body.gravity.y = 600;
+  player.body.gravity.y = 800;
   player.body.collideWorldBounds = true;
   player.animations.add('idle', [6], 20, true);
   player.animations.add('left', [5, 4, 3, 2, 1, 0], 5, false);
