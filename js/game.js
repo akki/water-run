@@ -1,5 +1,5 @@
 var mapDimX = 20;
-var mapDimY = 40;
+var mapDimY = 60;
 
 var TILE_WIDTH = 32;
 var TILE_HEIGHT = 29;
@@ -45,10 +45,10 @@ function create() {
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
-  createPowerLevelText();
-  createScoreText();
   droplets = game.add.group();
   createMap();
+  createPowerLevelText();
+  createScoreText();
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 
@@ -102,7 +102,7 @@ function update() {
 
 function checkpointIsCrossed(){
   var currentPlayerTileYPosition = mapDimY - mapLayer.getTileY(player.body.position.y);
-  if(currentPlayerTileYPosition > TILES_IN_ONE_CHECKPOINT_AREA * currentCheckpointArea){
+  if(currentPlayerTileYPosition >= TILES_IN_ONE_CHECKPOINT_AREA * currentCheckpointArea){
     currentCheckpointArea++;
     return true;
   }
@@ -147,7 +147,7 @@ function createMap() {
   var WINDOW = 0;
   var lastStart = 0;
   var lastEnd = 0;
-  for (var i = 0; i < mapDimY - 2; i++) {
+  for (var i = 2; i < mapDimY - 2; i = i+2) {
     var startPositionX;
     var leafLength = game.rnd.integerInRange(5, 7);
     do {
@@ -164,9 +164,7 @@ function createMap() {
       // Generate a droplet.
       var posX = game.rnd.integerInRange(startPositionX, startPositionX + leafLength - 1);
       var posY = i*2 - 1;
-      droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT, 'droplet');
-      game.physics.enable(droplet, Phaser.Physics.ARCADE);
-      droplets.add(droplet);
+      AddDroplet(posX, posY);
     }
 
     lastStart = startPositionX;
@@ -178,3 +176,10 @@ function createMap() {
     map.putTile(WINDOW, j, mapDimY - 1, mapLayer);
   }
 }
+
+function AddDroplet(posX, posY){
+      droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT, 'droplet');
+      game.physics.enable(droplet, Phaser.Physics.ARCADE);
+      droplets.add(droplet);
+}
+
