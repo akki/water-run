@@ -72,7 +72,7 @@ function create() {
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 
-  var buttonMusic = this.add.button(GAME_WINDOW_WIDTH - 128, GAME_WINDOW_HEIGHT-128, 'audio-control', clickMusic, this, 1,0,2);
+  var buttonMusic = this.add.button(GAME_WINDOW_WIDTH - 80, GAME_WINDOW_HEIGHT-80, 'audio-control', clickMusic, this, 1,0,2);
   buttonMusic.setFrames(1, 0, 2);
   buttonMusic.fixedToCamera = true;
 
