@@ -16,7 +16,7 @@ var player, object, powerLevel = 0;
 
 var map, mapLayer, currentTimer;
 
-var music;
+var music, musicCtrl;
 
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -29,6 +29,7 @@ function preload() {
   game.load.image('player', 'img/brick.png');
   game.load.image('windows', 'img/windows.png');
 
+  game.load.spritesheet('audio-control', 'img/button-sound.png', 180, 180)
   game.load.audio('level01', ['music/level01.mp3', 'music/level01.ogg']);
 
 }
@@ -44,10 +45,17 @@ function create() {
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 
+  var buttonMusic = this.add.button(500, 20, 'audio-control', this.clickMusic, this, 1,0,2);
+  buttonMusic.setFrames(1, 0, 2);
+  buttonMusic.fixedToCamera = true;
+
   music = game.add.audio('level01');
   music.loopFull();
   music.play();
+}
 
+function clickMusic() {
+  music.stop();
 }
 
 function updateCounter() {
@@ -86,6 +94,10 @@ function spawnPlayer() {
 function createPowerLevel(){
   powerLevelText = game.add.text(20,20, powerLevel , {font: "48px Arial", fill: "#000"});
   powerLevelText.fixedToCamera = true;
+}
+
+function createMusicOnOff() {
+
 }
 
 function spawnWindows() {
