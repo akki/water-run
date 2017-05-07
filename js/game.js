@@ -6,6 +6,7 @@ var facing = 'idle';
 var map, mapLayer, droplets, currentTimer;
 var music,preloadBar;
 var flower;
+var dropSound;
 
 var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
@@ -27,6 +28,7 @@ function preload() {
   game.load.image('topPanel', 'img/topPanel.png');
 
   game.load.audio('level01', ['music/level01.mp3', 'music/level01.ogg']);
+  game.load.audio('droplet',['music/drop.mp3'])
 }
 
 function create() {
@@ -64,6 +66,8 @@ function create() {
   music = game.add.audio('level01');
   music.loopFull();
   music.play();
+
+  drop = game.add.audio('droplet');
 }
 
 function clickMusic() {
@@ -86,6 +90,7 @@ function update() {
 
   game.physics.arcade.collide(player, droplets, function (player, droplet) {
     droplet.destroy();
+      drop.play();
       updateScore(3);
   });
 
