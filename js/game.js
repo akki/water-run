@@ -20,7 +20,9 @@ var currentCheckpointArea = 1;
 
 var player, object, powerLevel = 0;
 
-var map, mapLayer, droplets;
+var facing = 'idle';
+
+var map, mapLayer, droplets, currentTimer;
 
 var music, musicCtrl;
 
@@ -32,7 +34,7 @@ function preload() {
 
   game.load.image('background', 'img/background.png');
   game.load.image('ground', 'img/ground.png');
-  game.load.image('player', 'img/brick.png');
+  game.load.spritesheet('player', 'img/player.png', 64, 34);
   game.load.image('windows', 'img/windows.png');
   game.load.spritesheet('audio-control', 'img/button-sound.png', 180, 180)
   game.load.image('droplet', 'img/droplet.png');
@@ -81,10 +83,22 @@ function update() {
   });
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+    if (facing != 'left') {
+      facing = 'left';
+      player.animations.play('left');
+    }
     player.body.velocity.x = -250;
   } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+    if (facing != 'right') {
+      facing = 'right';
+      player.animations.play('right');
+    }
     player.body.velocity.x = 250;
   } else {
+    if (facing != 'idle') {
+      facing = 'idle';
+      player.animations.play('idle');
+    }
     player.body.velocity.x = 0;
   }
 
@@ -115,11 +129,15 @@ function updateScore(scores){
 }
 
 function spawnPlayer() {
-  player = game.add.sprite(game.world.CenterX, TILE_HEIGHT*(mapDimY-1), 'player');
+  player = game.add.sprite(game.world.CenterX, TILE_HEIGHT*(mapDimY-1.5), 'player');
   player.anchor.set(0.5);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = 600;
   player.body.collideWorldBounds = true;
+  player.animations.add('idle', [6], 20, true);
+  player.animations.add('left', [5, 4, 3, 2, 1, 0], 5, false);
+  player.animations.add('right', [8, 9, 10, 11, 12, 13], 5, false);
+  player.animations.play('idle');
 }
 
 function createPowerLevelText(){
@@ -147,7 +165,7 @@ function createMap() {
   var WINDOW = 0;
   var lastStart = 0;
   var lastEnd = 0;
-  for (var i = 0; i < mapDimY - 2; i++) {
+  for (var i = 0; i < ((mapDimY-2) / 2); i++) {
     var startPositionX;
     var leafLength = game.rnd.integerInRange(5, 7);
     do {
