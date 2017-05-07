@@ -37,7 +37,8 @@ function preload() {
   game.load.image('ground', 'img/ground.png');
   game.load.spritesheet('player', 'img/player.png', 64, 34);
   game.load.image('windows', 'img/windows.png');
-  game.load.spritesheet('audio-control', 'img/button-sound.png', 180, 180)
+  game.load.spritesheet('audio-control', 'img/button-sound.png', 180, 180);
+  game.load.spritesheet('cloud', 'img/clouds.png', 153, 58);
   game.load.image('droplet', 'img/droplet.png');
   game.load.audio('level01', ['music/level01.mp3', 'music/level01.ogg']);
 }
@@ -46,7 +47,15 @@ function create() {
   var background = game.add.sprite(0, 0, 'background');
   background.fixedToCamera = true;
 
-  var pnacza = game.add.tileSprite(0, 0, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT * mapDimY, 'pnacza');
+  game.add.tileSprite(0, 0, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT * mapDimY, 'pnacza');
+
+  for (var i = 0; i < 3; i++) {
+    var cloud = game.add.sprite(60, 150*(2*i+1), 'cloud', 0);
+    cloud.fixedToCamera = true;
+
+    cloud = game.add.sprite(400, 150*(2*i+2), 'cloud', 1);
+    cloud.fixedToCamera = true;
+  };
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
