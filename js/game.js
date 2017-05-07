@@ -1,8 +1,8 @@
-var mapDimX = 8;
+var mapDimX = 20;
 var mapDimY = 100;
 
-var TILE_WIDTH = 82;
-var TILE_HEIGHT = 75;
+var TILE_WIDTH = 32;
+var TILE_HEIGHT = 29;
 
 var GAME_WINDOW_WIDTH = TILE_WIDTH * mapDimX;
 var GAME_WINDOW_HEIGHT = 960;
@@ -74,14 +74,26 @@ function spawnWindows() {
   mapLayer.resizeWorld();
 
   var WINDOW = 0;
+  var lastStart = 0;
+  var lastEnd = 0;
   for (var i = 0; i < mapDimY - 2; i++) {
-    var xPos = i % 2 ? 0 : 5;
-    map.putTile(WINDOW, xPos, i, mapLayer);
-    map.putTile(WINDOW, xPos + 1, i, mapLayer);
-    map.putTile(WINDOW, xPos + 2, i, mapLayer);
+    var startPositionX;
+    var leafLength = game.rnd.integerInRange(5, 7);
+    do {
+      startPositionX = game.rnd.integerInRange(0, mapDimX - 7);
+    }
+    while (!(startPositionX + 2 <= lastStart
+      || startPositionX + leafLength - 2 >= lastEnd ))
+
+    for (var j = 0; j < leafLength; j++) {
+      map.putTile(WINDOW, startPositionX + j, i * 2, mapLayer);
+    }
+    lastStart = startPositionX;
+    lastEnd = lastStart + leafLength;
   }
 
+  // floor:
   for (var j = 0; j < mapDimX; j++) {
-    map.putTile(WINDOW, j, mapDimY-1, mapLayer);
+    map.putTile(WINDOW, j, mapDimY - 1, mapLayer);
   }
 }
