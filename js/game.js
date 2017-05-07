@@ -47,7 +47,7 @@ function preload() {
 }
 
 function create() {
-  var background = game.add.sprite(0, 0, 'background');
+  var background = game.add.sprite(0, 0, 'background'); 
   background.fixedToCamera = true;
 
   game.add.tileSprite(0, 0, GAME_WINDOW_WIDTH, TILE_HEIGHT * mapDimY, 'pnacza');
@@ -61,11 +61,12 @@ function create() {
   };
 
   game.add.sprite(0, TILE_HEIGHT * mapDimY - GROUND_HEIGHT, 'ground');
-
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
   droplets = game.add.group();
   createMap();
+  //  var topPanel = game.add.sprite(0, 0, 'ground');
+  //  topPanel.fixedToCamera = true;
   createPowerLevelText();
   createScoreText();
   game.camera.follow(player);
