@@ -13,6 +13,7 @@ var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS,
 
 var myFont;
 var player, object, powerLevel = 0;
+var droplets;
 
 var map, mapLayer, currentTimer;
 
@@ -26,6 +27,7 @@ function preload() {
   game.load.image('ground', 'img/ground.png');
   game.load.image('player', 'img/brick.png');
   game.load.image('windows', 'img/windows.png');
+  game.load.image('droplet', 'img/droplet.png');
 }
 
 function create() {
@@ -34,7 +36,8 @@ function create() {
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
-  spawnWindows();
+  droplets = game.add.group();
+  createMap();
   createPowerLevel();
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
@@ -49,6 +52,12 @@ function updateCounter() {
 
 function update() {
   game.physics.arcade.collide(player, mapLayer);
+
+  game.physics.arcade.collide(player, droplets, function (player, droplet) {
+    droplet.destroy();
+    // score++
+  });
+
   if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
     player.body.velocity.x = -250;
   } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
@@ -78,7 +87,7 @@ function createPowerLevel(){
   powerLevelText.fixedToCamera = true;
 }
 
-function spawnWindows() {
+function createMap() {
   map = game.add.tilemap();
   map.addTilesetImage('windows', 'windows', TILE_WIDTH, TILE_HEIGHT);
   map.setCollision([0, 1, 2], true);
@@ -101,6 +110,16 @@ function spawnWindows() {
     for (var j = 0; j < leafLength; j++) {
       map.putTile(WINDOW, startPositionX + j, i * 2, mapLayer);
     }
+
+    if (game.rnd.integerInRange(0, 5) == 0) {
+      // Generate a droplet.
+      var posX = game.rnd.integerInRange(startPositionX, startPositionX + leafLength - 1);
+      var posY = i*2 - 1;
+      droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT, 'droplet');
+      game.physics.enable(droplet, Phaser.Physics.ARCADE);
+      droplets.add(droplet);
+    }
+
     lastStart = startPositionX;
     lastEnd = lastStart + leafLength;
   }
