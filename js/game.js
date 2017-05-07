@@ -65,7 +65,7 @@ function create() {
 
   music = game.add.audio('level01');
   music.loopFull();
-  music.play();
+  music.play('',0,0.5);
 
   drop = game.add.audio('droplet');
 }
