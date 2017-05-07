@@ -25,16 +25,28 @@ function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
   spawnBrick();
-
-  windows = game.add.group();
-  game.time.events.loop(500, spawnWindow);
+  //game.time.events.loop(500, spawnWindow);
+  spawnWindows();
 }
 
-function update() {
-  brick.x = game.input.x;
-  brick.y = game.input.y;
 
-  game.physics.arcade.collide(brick, windows, crash);
+function update() {
+  game.physics.arcade.collide(brick, windows);
+  if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+    brick.body.velocity.x = -50;
+  } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+    brick.body.velocity.x = 50;
+  } else {
+    brick.body.velocity.x = 0;
+  }
+
+
+  if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
+    console.log('Keybord.UP')
+    brick.body.velocity.y = -100;
+  }
+
+
 
   windows.forEach(function(object) {
     if(object.y >= game.world.height) {
@@ -48,16 +60,29 @@ function spawnBrick() {
   brick = game.add.sprite(game.world.centerX, game.world.centerY, 'brick');
   brick.anchor.set(0.5);
   game.physics.enable(brick, Phaser.Physics.ARCADE);
+  brick.body.gravity.y = 50;
+     // brick.body.velocity.y = -100;
 }
 
-function spawnWindow() {
-  var randomPosition = game.rnd.integerInRange(0, game.world.width-100);
-  var randomFrame = game.rnd.integerInRange(0, 2);
-  object = game.add.sprite(randomPosition, -100, 'windows', randomFrame);
+function spawnWindow(xPos, yPos) {
+  object = game.add.sprite(xPos, yPos, 'windows', 0);
   game.physics.enable(object, Phaser.Physics.ARCADE);
-  object.body.gravity.y = 450;
+ object.body.immovable = true;
   windows.add(object);
 }
+
+function spawnWindows() {
+  windows = game.add.group();
+  var widht = 82;
+  spawnWindow(0, 500);
+  spawnWindow(widht, 500);
+  spawnWindow(widht*2, 500);
+  spawnWindow(widht*3, 500);
+  spawnWindow(widht*4, 500);
+  spawnWindow(widht*5, 450);
+  spawnWindow(widht*6, 450);
+}
+
 
 function crash(brick, object) {
   object.destroy();
