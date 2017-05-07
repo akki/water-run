@@ -7,12 +7,14 @@ var TILE_HEIGHT = 29;
 var GAME_WINDOW_WIDTH = TILE_WIDTH * mapDimX;
 var GAME_WINDOW_HEIGHT = 960;
 
+var MAX_POWER_LEVEL = 3;
+
 var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
 var myFont;
-var player, object, score = 0;
+var player, object, powerLevel = 0;
 
-var map, mapLayer;
+var map, mapLayer, currentTimer;
 
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -31,18 +33,22 @@ function create() {
   game.add.sprite(0, 292, 'ground');
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
-
   spawnPlayer();
   spawnWindows();
-
+  createPowerLevel();
   game.camera.follow(player);
+  game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 }
 
+function updateCounter() {
+  if(powerLevel < MAX_POWER_LEVEL){
+    powerLevel++;
+    powerLevelText.setText(powerLevel);
+  }
+}
 
 function update() {
-
   game.physics.arcade.collide(player, mapLayer);
-
   if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
     player.body.velocity.x = -250;
   } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
@@ -51,8 +57,10 @@ function update() {
     player.body.velocity.x = 0;
   }
 
-  if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.onFloor()) {
+  if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.onFloor() && powerLevel == MAX_POWER_LEVEL) {
     player.body.velocity.y = -450;
+    powerLevel = 0;
+    powerLevelText.setText(powerLevel);
   }
 
 }
@@ -63,6 +71,11 @@ function spawnPlayer() {
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = 600;
   player.body.collideWorldBounds = true;
+}
+
+function createPowerLevel(){
+  powerLevelText = game.add.text(20,20, powerLevel , {font: "48px Arial", fill: "#000"});
+  powerLevelText.fixedToCamera = true;
 }
 
 function spawnWindows() {
