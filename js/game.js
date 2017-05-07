@@ -206,7 +206,7 @@ function createMap() {
      for(var l = 0; l < 4; l++){
     map.putTile(INVISIBLE_WALL, k, l, mapLayer);
      }
-  } 
+  }
 }
 
 function addDroplet(posX, posY){
