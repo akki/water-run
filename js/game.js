@@ -5,6 +5,7 @@ var player, object, powerLevel = 0;
 var facing = 'idle';
 var map, mapLayer, droplets, currentTimer;
 var music,preloadBar;
+var flower;
 
 var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
@@ -21,6 +22,7 @@ function preload() {
   game.load.image('tiles', 'img/tiles.png');
   game.load.spritesheet('audio-control', 'img/button-sound.png', 80, 80);
   game.load.spritesheet('cloud', 'img/clouds.png', 153, 58);
+  game.load.spritesheet('flower', 'img/flower.png', 57, 100);
   game.load.image('droplet', 'img/droplet.png');
   game.load.image('topPanel', 'img/topPanel.png');
 
@@ -46,10 +48,13 @@ function create() {
   spawnPlayer();
   droplets = game.add.group();
   createMap();
-   var topPanel = game.add.sprite(0, 0, 'topPanel');
-   topPanel.fixedToCamera = true;
+  var topPanel = game.add.sprite(0, 0, 'topPanel');
+  topPanel.fixedToCamera = true;
   createPowerLevelText();
   createScoreText();
+  flower = game.add.sprite(550, 0, 'flower', 0);
+  flower.fixedToCamera = true;
+
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 
@@ -113,6 +118,16 @@ function update() {
 
   if(checkpointIsCrossed()){
     updateScore(10);
+  }
+
+  if (score < 10) {
+    flower.frame = 3;
+  } else if (score < 20) {
+    flower.frame = 2;
+  } else if (score < 30) {
+    flower.frame = 1;
+  } else {
+    flower.frame = 0;
   }
 
 }
@@ -206,7 +221,7 @@ function createMap() {
      for(var l = 0; l < 4; l++){
     map.putTile(INVISIBLE_WALL, k, l, mapLayer);
      }
-  } 
+  }
 }
 
 function addDroplet(posX, posY){
