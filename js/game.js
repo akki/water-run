@@ -31,36 +31,36 @@ function create() {
 
 
 function update() {
+
   game.physics.arcade.collide(brick, windows);
+
   if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-    brick.body.velocity.x = -50;
+    brick.body.velocity.x = -250;
   } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-    brick.body.velocity.x = 50;
+    brick.body.velocity.x = 250;
   } else {
     brick.body.velocity.x = 0;
   }
 
-
   if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
     console.log('Keybord.UP')
-    brick.body.velocity.y = -100;
+    brick.body.velocity.y = -300;
   }
 
+  // windows.forEach(function(object) {
+  //   if(object.y >= game.world.height) {
+  //     alert('GAME OVER!\n\nYour score: '+score);
+  //     location.reload();
+  //   }
+  // });
 
-
-  windows.forEach(function(object) {
-    if(object.y >= game.world.height) {
-      alert('GAME OVER!\n\nYour score: '+score);
-      location.reload();
-    }
-  });
 }
 
 function spawnBrick() {
   brick = game.add.sprite(game.world.centerX, game.world.centerY, 'brick');
   brick.anchor.set(0.5);
   game.physics.enable(brick, Phaser.Physics.ARCADE);
-  brick.body.gravity.y = 50;
+  brick.body.gravity.y = 500;
      // brick.body.velocity.y = -100;
 }
 
