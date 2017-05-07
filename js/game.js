@@ -1,5 +1,5 @@
 var mapDimX = 20;
-var mapDimY = 100;
+var mapDimY = 40;
 
 var TILE_WIDTH = 32;
 var TILE_HEIGHT = 29;
@@ -7,14 +7,20 @@ var TILE_HEIGHT = 29;
 var GAME_WINDOW_WIDTH = TILE_WIDTH * mapDimX;
 var GAME_WINDOW_HEIGHT = 960;
 
-var MAX_POWER_LEVEL = 3;
+var MAX_POWER_LEVEL = 1;
+var CHECKPOINT_NUMBER = 3;
+var TILES_IN_ONE_CHECKPOINT_AREA = parseInt(mapDimY/CHECKPOINT_NUMBER);
 
 var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
 var myFont;
+
+var player, object, powerLevel = 0, score = 0;
+var currentCheckpointArea = 1;
+
 var player, object, powerLevel = 0;
 
-var map, mapLayer, currentTimer;
+var map, mapLayer, droplets;
 
 var music, musicCtrl;
 
@@ -28,10 +34,9 @@ function preload() {
   game.load.image('ground', 'img/ground.png');
   game.load.image('player', 'img/brick.png');
   game.load.image('windows', 'img/windows.png');
-
   game.load.spritesheet('audio-control', 'img/button-sound.png', 180, 180)
+  game.load.image('droplet', 'img/droplet.png');
   game.load.audio('level01', ['music/level01.mp3', 'music/level01.ogg']);
-
 }
 
 function create() {
@@ -40,8 +45,10 @@ function create() {
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
-  spawnWindows();
-  createPowerLevel();
+  createPowerLevelText();
+  createScoreText();
+  droplets = game.add.group();
+  createMap();
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 
@@ -67,6 +74,12 @@ function updateCounter() {
 
 function update() {
   game.physics.arcade.collide(player, mapLayer);
+
+  game.physics.arcade.collide(player, droplets, function (player, droplet) {
+    droplet.destroy();
+      updateScore(1);
+  });
+
   if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
     player.body.velocity.x = -250;
   } else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
@@ -81,6 +94,24 @@ function update() {
     powerLevelText.setText(powerLevel);
   }
 
+  if(checkpointIsCrossed()){
+    updateScore(10);
+  }
+
+}
+
+function checkpointIsCrossed(){
+  var currentPlayerTileYPosition = mapDimY - mapLayer.getTileY(player.body.position.y);
+  if(currentPlayerTileYPosition > TILES_IN_ONE_CHECKPOINT_AREA * currentCheckpointArea){
+    currentCheckpointArea++;
+    return true;
+  }
+  return false;
+}
+
+function updateScore(scores){
+  score += scores;
+  scoreText.setText("Score: " + score);
 }
 
 function spawnPlayer() {
@@ -91,7 +122,7 @@ function spawnPlayer() {
   player.body.collideWorldBounds = true;
 }
 
-function createPowerLevel(){
+function createPowerLevelText(){
   powerLevelText = game.add.text(20,20, powerLevel , {font: "48px Arial", fill: "#000"});
   powerLevelText.fixedToCamera = true;
 }
@@ -100,7 +131,12 @@ function createMusicOnOff() {
 
 }
 
-function spawnWindows() {
+function createScoreText(){
+  scoreText = game.add.text(GAME_WINDOW_WIDTH-250,20, "Score: " + score , {font: "48px Arial", fill: "#000"});
+  scoreText.fixedToCamera = true;
+}
+
+function createMap() {
   map = game.add.tilemap();
   map.addTilesetImage('windows', 'windows', TILE_WIDTH, TILE_HEIGHT);
   map.setCollision([0, 1, 2], true);
@@ -123,6 +159,16 @@ function spawnWindows() {
     for (var j = 0; j < leafLength; j++) {
       map.putTile(WINDOW, startPositionX + j, i * 2, mapLayer);
     }
+
+    if (game.rnd.integerInRange(0, 5) == 0) {
+      // Generate a droplet.
+      var posX = game.rnd.integerInRange(startPositionX, startPositionX + leafLength - 1);
+      var posY = i*2 - 1;
+      droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT, 'droplet');
+      game.physics.enable(droplet, Phaser.Physics.ARCADE);
+      droplets.add(droplet);
+    }
+
     lastStart = startPositionX;
     lastEnd = lastStart + leafLength;
   }
