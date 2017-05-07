@@ -33,6 +33,7 @@ function preload() {
   game.stage.backgroundColor = '#037A88';
 
   game.load.image('background', 'img/background.png');
+  game.load.image('pnacza', 'img/pnacza.png');
   game.load.image('ground', 'img/ground.png');
   game.load.spritesheet('player', 'img/player.png', 64, 34);
   game.load.image('windows', 'img/windows.png');
@@ -42,8 +43,10 @@ function preload() {
 }
 
 function create() {
-  game.add.sprite(0, 0, 'background');
-  game.add.sprite(0, 292, 'ground');
+  var background = game.add.sprite(0, 0, 'background');
+  background.fixedToCamera = true;
+
+  var pnacza = game.add.tileSprite(0, 0, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT * mapDimY, 'pnacza');
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
