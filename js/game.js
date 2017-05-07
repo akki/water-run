@@ -1,7 +1,9 @@
 var game = new Phaser.Game(640, 960, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
 var myFont, scoreText;
-var brick, windows, object, score = 0;
+var brick, object, score = 0;
+
+var map, mapLayer;
 
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -12,7 +14,7 @@ function preload() {
   game.load.image('background', 'img/background.png');
   game.load.image('ground', 'img/ground.png');
   game.load.image('brick', 'img/brick.png');
-  game.load.spritesheet('windows', 'img/windows.png', 82, 75);
+  game.load.image('windows', 'img/windows.png');
 }
 
 function create() {
@@ -32,7 +34,7 @@ function create() {
 
 function update() {
 
-  game.physics.arcade.collide(brick, windows);
+  game.physics.arcade.collide(brick, mapLayer);
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
     brick.body.velocity.x = -250;
@@ -42,7 +44,7 @@ function update() {
     brick.body.velocity.x = 0;
   }
 
-  if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
+  if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && brick.body.onFloor()) {
     console.log('Keybord.UP')
     brick.body.velocity.y = -300;
   }
@@ -64,23 +66,20 @@ function spawnBrick() {
      // brick.body.velocity.y = -100;
 }
 
-function spawnWindow(xPos, yPos) {
-  object = game.add.sprite(xPos, yPos, 'windows', 0);
-  game.physics.enable(object, Phaser.Physics.ARCADE);
- object.body.immovable = true;
-  windows.add(object);
-}
-
 function spawnWindows() {
-  windows = game.add.group();
-  var widht = 82;
-  spawnWindow(0, 500);
-  spawnWindow(widht, 500);
-  spawnWindow(widht*2, 500);
-  spawnWindow(widht*3, 500);
-  spawnWindow(widht*4, 500);
-  spawnWindow(widht*5, 450);
-  spawnWindow(widht*6, 450);
+  map = game.add.tilemap();
+  map.addTilesetImage('windows', 'windows', 82, 75);
+  map.setCollision([0, 1, 2], true);
+
+  mapLayer = map.create('level', 8, 100, 82, 75);
+
+  var WINDOW = 0;
+  for (var i = 0; i < 20; i++) {
+    var xPos = i % 2 ? 0 : 5;
+    map.putTile(WINDOW, xPos, i*2, mapLayer);
+    map.putTile(WINDOW, xPos+1, i*2, mapLayer);
+    map.putTile(WINDOW, xPos+2, i*2, mapLayer);
+  }
 }
 
 
