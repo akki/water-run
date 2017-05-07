@@ -26,7 +26,7 @@ var facing = 'idle';
 
 var map, mapLayer, droplets, currentTimer;
 
-var music, musicCtrl;
+var music;
 
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -39,9 +39,10 @@ function preload() {
   game.load.image('ground', 'img/ground.png');
   game.load.spritesheet('player', 'img/player.png', 64, 34);
   game.load.image('tiles', 'img/tiles.png');
-  game.load.spritesheet('audio-control', 'img/button-sound.png', 180, 180);
+  game.load.spritesheet('audio-control', 'img/button-sound.png', 80, 80);
   game.load.spritesheet('cloud', 'img/clouds.png', 153, 58);
   game.load.image('droplet', 'img/droplet.png');
+
   game.load.audio('level01', ['music/level01.mp3', 'music/level01.ogg']);
 }
 
@@ -70,7 +71,7 @@ function create() {
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 
-  var buttonMusic = this.add.button(500, 20, 'audio-control', this.clickMusic, this, 1,0,2);
+  var buttonMusic = this.add.button(GAME_WINDOW_WIDTH - 128, GAME_WINDOW_HEIGHT-128, 'audio-control', clickMusic, this, 1,0,2);
   buttonMusic.setFrames(1, 0, 2);
   buttonMusic.fixedToCamera = true;
 
@@ -80,7 +81,11 @@ function create() {
 }
 
 function clickMusic() {
-  music.stop();
+  if (music.paused) {
+    music.resume();
+  } else {
+    music.pause();
+  }
 }
 
 function updateCounter() {
