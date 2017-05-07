@@ -1,11 +1,13 @@
-var mapDimX = 20;
-var mapDimY = 60;
+var mapDimX = 24;
+var mapDimY = 80;
 
-var TILE_WIDTH = 32;
-var TILE_HEIGHT = 29;
+var TILE_WIDTH = 26;
+var TILE_HEIGHT = 25;
 
 var GAME_WINDOW_WIDTH = TILE_WIDTH * mapDimX;
 var GAME_WINDOW_HEIGHT = 960;
+
+var GROUND_HEIGHT = 110;
 
 var MAX_POWER_LEVEL = 1;
 var CHECKPOINT_NUMBER = 3;
@@ -36,7 +38,7 @@ function preload() {
   game.load.image('pnacza', 'img/pnacza.png');
   game.load.image('ground', 'img/ground.png');
   game.load.spritesheet('player', 'img/player.png', 64, 34);
-  game.load.image('windows', 'img/windows.png');
+  game.load.image('tiles', 'img/tiles.png');
   game.load.spritesheet('audio-control', 'img/button-sound.png', 180, 180);
   game.load.spritesheet('cloud', 'img/clouds.png', 153, 58);
   game.load.image('droplet', 'img/droplet.png');
@@ -47,7 +49,7 @@ function create() {
   var background = game.add.sprite(0, 0, 'background');
   background.fixedToCamera = true;
 
-  game.add.tileSprite(0, 0, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT * mapDimY, 'pnacza');
+  game.add.tileSprite(0, 0, GAME_WINDOW_WIDTH, TILE_HEIGHT * mapDimY, 'pnacza');
 
   for (var i = 0; i < 3; i++) {
     var cloud = game.add.sprite(60, 150*(2*i+1), 'cloud', 0);
@@ -56,6 +58,8 @@ function create() {
     cloud = game.add.sprite(400, 150*(2*i+2), 'cloud', 1);
     cloud.fixedToCamera = true;
   };
+
+  game.add.sprite(0, TILE_HEIGHT * mapDimY - GROUND_HEIGHT, 'ground');
 
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
@@ -141,7 +145,7 @@ function updateScore(scores){
 }
 
 function spawnPlayer() {
-  player = game.add.sprite(game.world.CenterX, TILE_HEIGHT*(mapDimY-1.5), 'player');
+  player = game.add.sprite(game.world.CenterX, TILE_HEIGHT*(mapDimY-2.5), 'player');
   player.anchor.set(0.5);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = 600;
@@ -168,33 +172,35 @@ function createScoreText(){
 
 function createMap() {
   map = game.add.tilemap();
-  map.addTilesetImage('windows', 'windows', TILE_WIDTH, TILE_HEIGHT);
-  map.setCollision([0, 1, 2], true);
+  map.addTilesetImage('tiles', 'tiles', TILE_WIDTH, TILE_HEIGHT);
+  map.setCollisionBetween(0, 13, true); // all tiles will collide
 
   mapLayer = map.create('level', mapDimX, mapDimY, TILE_WIDTH, TILE_HEIGHT);
   mapLayer.resizeWorld();
 
-  var WINDOW = 0;
+  var INVISIBLE_WALL = 0;
+  var LEAF_LENGTH = 13;
+
   var lastStart = 0;
   var lastEnd = 0;
-  for (var i = 2; i < mapDimY - 2; i = i+2) {
+  for (var i = 2; i < mapDimY - 4; i += 4) {
     var startPositionX;
-    var leafLength = game.rnd.integerInRange(5, 7);
+    var leafLength = LEAF_LENGTH;
     do {
-      startPositionX = game.rnd.integerInRange(0, mapDimX - 7);
+      startPositionX = game.rnd.integerInRange(0, mapDimX - LEAF_LENGTH);
     }
     while (!(startPositionX + 2 <= lastStart
       || startPositionX + leafLength - 2 >= lastEnd ))
 
     for (var j = 0; j < leafLength; j++) {
-      map.putTile(WINDOW, startPositionX + j, i * 2, mapLayer);
+      map.putTile(j+1, startPositionX + j, i, mapLayer);
     }
 
     if (game.rnd.integerInRange(0, 5) == 0) {
       // Generate a droplet.
       var posX = game.rnd.integerInRange(startPositionX, startPositionX + leafLength - 1);
-      var posY = i*2 - 1;
-      AddDroplet(posX, posY);
+      var posY = i - 1;
+      addDroplet(posX, posY);
     }
 
     lastStart = startPositionX;
@@ -203,13 +209,13 @@ function createMap() {
 
   // floor:
   for (var j = 0; j < mapDimX; j++) {
-    map.putTile(WINDOW, j, mapDimY - 1, mapLayer);
+    map.putTile(INVISIBLE_WALL, j, mapDimY - 2, mapLayer);
+    map.putTile(INVISIBLE_WALL, j, mapDimY - 1, mapLayer);
   }
 }
 
-function AddDroplet(posX, posY){
+function addDroplet(posX, posY){
       droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT, 'droplet');
       game.physics.enable(droplet, Phaser.Physics.ARCADE);
       droplets.add(droplet);
 }
-
