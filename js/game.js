@@ -1,8 +1,8 @@
 var GAME_WINDOW_WIDTH = 640;
 var GAME_WINDOW_HEIGHT = 960;
 
-var WINDOW_WIDTH = 82;
-var WINDOW_HEIGHT = 75;
+var TILE_WIDTH = 82;
+var TILE_HEIGHT = 75;
 
 var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
@@ -65,10 +65,10 @@ function spawnBrick() {
 
 function spawnWindows() {
   map = game.add.tilemap();
-  map.addTilesetImage('windows', 'windows', WINDOW_WIDTH, WINDOW_HEIGHT);
+  map.addTilesetImage('windows', 'windows', TILE_WIDTH, TILE_HEIGHT);
   map.setCollision([0, 1, 2], true);
 
-  mapLayer = map.create('level', 8, 100, WINDOW_WIDTH, WINDOW_HEIGHT);
+  mapLayer = map.create('level', 8, 100, TILE_WIDTH, TILE_HEIGHT);
 
   var WINDOW = 0;
   for (var i = 0; i < 20; i++) {
