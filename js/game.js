@@ -23,7 +23,7 @@ function preload() {
   game.load.spritesheet('audio-control', 'img/button-sound.png', 80, 80);
   game.load.spritesheet('cloud', 'img/clouds.png', 153, 58);
   game.load.spritesheet('flower', 'img/flower.png', 57, 100);
-  game.load.image('droplet', 'img/droplet.png');
+  game.load.spritesheet('droplet', 'img/drop.png', 46, 18);
   game.load.image('topPanel', 'img/topPanel.png');
 
   game.load.audio('level01', ['music/level01.mp3', 'music/level01.ogg']);
@@ -46,7 +46,6 @@ function create() {
   game.add.sprite(0, TILE_HEIGHT * mapDimY - GROUND_HEIGHT, 'ground');
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
-  droplets = game.add.group();
   createMap();
    var topPanel = game.add.sprite(0, 0, 'topPanel');
    topPanel.fixedToCamera = true;
@@ -151,6 +150,7 @@ function spawnPlayer() {
   player.anchor.set(0.5);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = 800;
+  player.body.bounce.y = 0.4;
   player.body.collideWorldBounds = true;
   var ANIMATION_SPEED = 8;
   player.animations.add('idle', [6], 20, true);
@@ -176,6 +176,8 @@ function createMap() {
 
   mapLayer = map.create('level', mapDimX, mapDimY, TILE_WIDTH, TILE_HEIGHT);
   mapLayer.resizeWorld();
+
+  droplets = game.add.group();
 
   var INVISIBLE_WALL = 0;
   var LEAF_LENGTH = 13;
@@ -221,7 +223,7 @@ function createMap() {
 }
 
 function addDroplet(posX, posY){
-      droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT, 'droplet');
+      droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT + 15, 'droplet', game.rnd.integerInRange(0, 5));
       game.physics.enable(droplet, Phaser.Physics.ARCADE);
       droplets.add(droplet);
 }
