@@ -1,11 +1,13 @@
 # Water Run
 
-A game in Phaser framework
+A game in Phaser framework.
 
-## Running
+[Play the game](https://rawgit.com/pwmarcz/water-run/master/index.html)
+
+## Running locally
 
 Start a HTTP server:
 
     $ python -m SimpleHTTPServer
 
-The go to `localhost:8000`.
+Then go to `localhost:8000`.

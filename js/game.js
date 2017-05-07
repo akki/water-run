@@ -28,7 +28,7 @@ function preload() {
 }
 
 function create() {
-  var background = game.add.sprite(0, 0, 'background'); 
+  var background = game.add.sprite(0, 0, 'background');
   background.fixedToCamera = true;
 
   game.add.tileSprite(0, 0, GAME_WINDOW_WIDTH, TILE_HEIGHT * mapDimY, 'pnacza');
@@ -137,9 +137,10 @@ function spawnPlayer() {
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = 800;
   player.body.collideWorldBounds = true;
+  var ANIMATION_SPEED = 8;
   player.animations.add('idle', [6], 20, true);
-  player.animations.add('left', [5, 4, 3, 2, 1, 0], 5, false);
-  player.animations.add('right', [8, 9, 10, 11, 12, 13], 5, false);
+  player.animations.add('left', [5, 4, 3, 2, 1, 0], ANIMATION_SPEED, false);
+  player.animations.add('right', [8, 9, 10, 11, 12, 13], ANIMATION_SPEED, false);
   player.animations.play('idle');
 }
 
