@@ -48,15 +48,9 @@ function create() {
   spawnPlayer();
   droplets = game.add.group();
   createMap();
-<<<<<<< HEAD
    var topPanel = game.add.sprite(0, 0, 'topPanel');
    topPanel.fixedToCamera = true;
   //createPowerLevelText();
-=======
-  var topPanel = game.add.sprite(0, 0, 'topPanel');
-  topPanel.fixedToCamera = true;
-  createPowerLevelText();
->>>>>>> adb8ba5da84ef21cd0c78a3755c33578e8933ef5
   createScoreText();
   flower = game.add.sprite(550, 0, 'flower', 0);
   flower.fixedToCamera = true;
