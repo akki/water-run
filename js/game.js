@@ -52,7 +52,7 @@ function update() {
   }
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.onFloor()) {
-    player.body.velocity.y = -300;
+    player.body.velocity.y = -450;
   }
 
 }
@@ -61,7 +61,7 @@ function spawnPlayer() {
   player = game.add.sprite(game.world.CenterX, TILE_HEIGHT*(mapDimY-1), 'player');
   player.anchor.set(0.5);
   game.physics.enable(player, Phaser.Physics.ARCADE);
-  player.body.gravity.y = 500;
+  player.body.gravity.y = 600;
   player.body.collideWorldBounds = true;
 }
 
