@@ -48,7 +48,7 @@ function create() {
   createMap();
    var topPanel = game.add.sprite(0, 0, 'topPanel');
    topPanel.fixedToCamera = true;
-  createPowerLevelText();
+  //createPowerLevelText();
   createScoreText();
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
@@ -73,7 +73,7 @@ function clickMusic() {
 function updateCounter() {
   if(powerLevel < MAX_POWER_LEVEL){
     powerLevel++;
-    powerLevelText.setText(powerLevel);
+    //powerLevelText.setText(powerLevel);
   }
 }
 
@@ -106,9 +106,9 @@ function update() {
   }
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.onFloor() && powerLevel == MAX_POWER_LEVEL) {
-    player.body.velocity.y = -550;
+    player.body.velocity.y = -650;
     powerLevel = 0;
-    powerLevelText.setText(powerLevel);
+    //powerLevelText.setText(powerLevel);
   }
 
   if(checkpointIsCrossed()){
@@ -144,10 +144,10 @@ function spawnPlayer() {
   player.animations.play('idle');
 }
 
-function createPowerLevelText(){
-  powerLevelText = game.add.text(80,20, powerLevel , {font: "48px Arial", fill: "#000"});
-  powerLevelText.fixedToCamera = true;
-}
+// function createPowerLevelText() {
+//    powerLevelText = game.add.text(80,20, powerLevel , {font: "48px Arial", fill: "#000"});
+//    powerLevelText.fixedToCamera = true;
+// }
 
 function createMusicOnOff() {
 
