@@ -1,5 +1,5 @@
 var mapDimX = 24;
-var mapDimY = 40;
+var mapDimY = 80;
 
 var TILE_WIDTH = 26;
 var TILE_HEIGHT = 25;
