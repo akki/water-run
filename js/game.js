@@ -5,6 +5,7 @@ var player, object, powerLevel = 0;
 var facing = 'idle';
 var map, mapLayer, droplets, currentTimer;
 var music,preloadBar;
+var flower;
 
 var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
@@ -21,7 +22,8 @@ function preload() {
   game.load.image('tiles', 'img/tiles.png');
   game.load.spritesheet('audio-control', 'img/button-sound.png', 80, 80);
   game.load.spritesheet('cloud', 'img/clouds.png', 153, 58);
-  game.load.image('droplet', 'img/droplet.png');
+  game.load.spritesheet('flower', 'img/flower.png', 57, 100);
+  game.load.spritesheet('droplet', 'img/drop.png', 46, 18);
   game.load.image('topPanel', 'img/topPanel.png');
 
   game.load.audio('level01', ['music/level01.mp3', 'music/level01.ogg']);
@@ -44,12 +46,14 @@ function create() {
   game.add.sprite(0, TILE_HEIGHT * mapDimY - GROUND_HEIGHT, 'ground');
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
-  droplets = game.add.group();
   createMap();
    var topPanel = game.add.sprite(0, 0, 'topPanel');
    topPanel.fixedToCamera = true;
-  createPowerLevelText();
+  //createPowerLevelText();
   createScoreText();
+  flower = game.add.sprite(550, 0, 'flower', 0);
+  flower.fixedToCamera = true;
+
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 
@@ -73,7 +77,7 @@ function clickMusic() {
 function updateCounter() {
   if(powerLevel < MAX_POWER_LEVEL){
     powerLevel++;
-    powerLevelText.setText(powerLevel);
+    //powerLevelText.setText(powerLevel);
   }
 }
 
@@ -106,13 +110,23 @@ function update() {
   }
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.onFloor() && powerLevel == MAX_POWER_LEVEL) {
-    player.body.velocity.y = -550;
+    player.body.velocity.y = -650;
     powerLevel = 0;
-    powerLevelText.setText(powerLevel);
+    //powerLevelText.setText(powerLevel);
   }
 
   if(checkpointIsCrossed()){
     updateScore(10);
+  }
+
+  if (score < 10) {
+    flower.frame = 3;
+  } else if (score < 20) {
+    flower.frame = 2;
+  } else if (score < 30) {
+    flower.frame = 1;
+  } else {
+    flower.frame = 0;
   }
 
 }
@@ -144,10 +158,10 @@ function spawnPlayer() {
   player.animations.play('idle');
 }
 
-function createPowerLevelText(){
-  powerLevelText = game.add.text(80,20, powerLevel , {font: "48px Arial", fill: "#000"});
-  powerLevelText.fixedToCamera = true;
-}
+// function createPowerLevelText() {
+//    powerLevelText = game.add.text(80,20, powerLevel , {font: "48px Arial", fill: "#000"});
+//    powerLevelText.fixedToCamera = true;
+// }
 
 function createMusicOnOff() {
 
@@ -165,6 +179,8 @@ function createMap() {
 
   mapLayer = map.create('level', mapDimX, mapDimY, TILE_WIDTH, TILE_HEIGHT);
   mapLayer.resizeWorld();
+
+  droplets = game.add.group();
 
   var INVISIBLE_WALL = 0;
   var LEAF_LENGTH = 13;
@@ -210,7 +226,7 @@ function createMap() {
 }
 
 function addDroplet(posX, posY){
-      droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT, 'droplet');
+      droplet = game.add.sprite(posX*TILE_WIDTH, posY*TILE_HEIGHT + 15, 'droplet', game.rnd.integerInRange(0, 5));
       game.physics.enable(droplet, Phaser.Physics.ARCADE);
       droplets.add(droplet);
 }
