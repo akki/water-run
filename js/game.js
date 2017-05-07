@@ -201,7 +201,7 @@ function createMap() {
       map.putTile(j+1, startPositionX + j, i, mapLayer);
     }
 
-    if (game.rnd.integerInRange(0, 5) == 0) {
+    if (game.rnd.integerInRange(0, 2) == 0) {
       // Generate a droplet.
       var posX = game.rnd.integerInRange(startPositionX, startPositionX + leafLength - 1);
       var posY = i - 1;
