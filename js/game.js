@@ -124,7 +124,7 @@ function update() {
   }
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.onFloor() && powerLevel == MAX_POWER_LEVEL) {
-    player.body.velocity.y = -700;
+    player.body.velocity.y = -550;
     powerLevel = 0;
     powerLevelText.setText(powerLevel);
   }
