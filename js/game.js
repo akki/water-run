@@ -185,6 +185,7 @@ function createMap() {
 
   var INVISIBLE_WALL = 0;
   var LEAF_LENGTH = 13;
+  var MIN_OVERLAP = 3;
 
   var lastStart = 0;
   var lastEnd = 0;
@@ -194,8 +195,8 @@ function createMap() {
     do {
       startPositionX = game.rnd.integerInRange(0, mapDimX - LEAF_LENGTH);
     }
-    while (!(startPositionX + 2 <= lastStart
-      || startPositionX + leafLength - 2 >= lastEnd ))
+    while (!(startPositionX + MIN_OVERLAP <= lastStart
+      || startPositionX + leafLength - MIN_OVERLAP >= lastEnd ))
 
     for (var j = 0; j < leafLength; j++) {
       map.putTile(j+1, startPositionX + j, i, mapLayer);
