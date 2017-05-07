@@ -1,5 +1,5 @@
 var mapDimX = 20;
-var mapDimY = 100;
+var mapDimY = 40;
 
 var TILE_WIDTH = 32;
 var TILE_HEIGHT = 29;
@@ -7,12 +7,15 @@ var TILE_HEIGHT = 29;
 var GAME_WINDOW_WIDTH = TILE_WIDTH * mapDimX;
 var GAME_WINDOW_HEIGHT = 960;
 
-var MAX_POWER_LEVEL = 3;
+var MAX_POWER_LEVEL = 1;
+var CHECKPOINT_NUMBER = 3;
+var TILES_IN_ONE_CHECKPOINT_AREA = parseInt(mapDimY/CHECKPOINT_NUMBER);
 
 var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
 var myFont;
-var player, object, powerLevel = 0;
+var player, object, powerLevel = 0, score = 0;
+var currentCheckpointArea = 1;
 
 var map, mapLayer, currentTimer;
 
@@ -35,7 +38,8 @@ function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
   spawnPlayer();
   spawnWindows();
-  createPowerLevel();
+  createPowerLevelText();
+  createScoreText();
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 }
@@ -63,6 +67,24 @@ function update() {
     powerLevelText.setText(powerLevel);
   }
 
+  if(checkpointIsCrossed()){
+    updateScore(10);
+  }
+
+}
+
+function checkpointIsCrossed(){
+  var currentPlayerTileYPosition = mapDimY - mapLayer.getTileY(player.body.position.y);
+  if(currentPlayerTileYPosition > TILES_IN_ONE_CHECKPOINT_AREA * currentCheckpointArea){
+    currentCheckpointArea++;
+    return true;
+  }
+  return false;
+}
+
+function updateScore(scores){
+  score += scores;
+  scoreText.setText("Score: " + score);
 }
 
 function spawnPlayer() {
@@ -73,9 +95,14 @@ function spawnPlayer() {
   player.body.collideWorldBounds = true;
 }
 
-function createPowerLevel(){
+function createPowerLevelText(){
   powerLevelText = game.add.text(20,20, powerLevel , {font: "48px Arial", fill: "#000"});
   powerLevelText.fixedToCamera = true;
+}
+
+function createScoreText(){
+  scoreText = game.add.text(GAME_WINDOW_WIDTH-250,20, "Score: " + score , {font: "48px Arial", fill: "#000"});
+  scoreText.fixedToCamera = true;
 }
 
 function spawnWindows() {
