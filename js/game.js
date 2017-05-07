@@ -50,7 +50,7 @@ function create() {
    var topPanel = game.add.sprite(0, 0, 'topPanel');
    topPanel.fixedToCamera = true;
   //createPowerLevelText();
-  createScoreText();
+  //createScoreText();
   flower = game.add.sprite(550, 0, 'flower', 0);
   flower.fixedToCamera = true;
 
@@ -86,7 +86,7 @@ function update() {
 
   game.physics.arcade.collide(player, droplets, function (player, droplet) {
     droplet.destroy();
-      updateScore(1);
+      updateScore(3);
   });
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
@@ -142,7 +142,7 @@ function checkpointIsCrossed(){
 
 function updateScore(scores){
   score += scores;
-  scoreText.setText("Score: " + score);
+  //scoreText.setText("Score: " + score);
 }
 
 function spawnPlayer() {
@@ -150,6 +150,7 @@ function spawnPlayer() {
   player.anchor.set(0.5);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = 800;
+  player.body.bounce.y = 0.4;
   player.body.collideWorldBounds = true;
   var ANIMATION_SPEED = 8;
   player.animations.add('idle', [6], 20, true);
@@ -163,14 +164,10 @@ function spawnPlayer() {
 //    powerLevelText.fixedToCamera = true;
 // }
 
-function createMusicOnOff() {
-
-}
-
-function createScoreText(){
-  scoreText = game.add.text(GAME_WINDOW_WIDTH-250,20, "Score: " + score , {font: "48px Arial", fill: "#000"});
-  scoreText.fixedToCamera = true;
-}
+// function createScoreText(){
+//   scoreText = game.add.text(GAME_WINDOW_WIDTH-250,20, "Score: " + score , {font: "48px Arial", fill: "#000"});
+//   scoreText.fixedToCamera = true;
+// }
 
 function createMap() {
   map = game.add.tilemap();
