@@ -1,32 +1,12 @@
-var mapDimX = 24;
-var mapDimY = 80;
-
-var TILE_WIDTH = 26;
-var TILE_HEIGHT = 25;
-
-var GAME_WINDOW_WIDTH = TILE_WIDTH * mapDimX;
-var GAME_WINDOW_HEIGHT = 960;
-
-var GROUND_HEIGHT = 110;
-
-var MAX_POWER_LEVEL = 1;
-var CHECKPOINT_NUMBER = 3;
-var TILES_IN_ONE_CHECKPOINT_AREA = parseInt(mapDimY/CHECKPOINT_NUMBER);
-
-var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
-
 var myFont;
-
 var player, object, powerLevel = 0, score = 0;
 var currentCheckpointArea = 1;
-
 var player, object, powerLevel = 0;
-
 var facing = 'idle';
-
 var map, mapLayer, droplets, currentTimer;
+var music,preloadBar;
 
-var music;
+var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -42,6 +22,7 @@ function preload() {
   game.load.spritesheet('audio-control', 'img/button-sound.png', 80, 80);
   game.load.spritesheet('cloud', 'img/clouds.png', 153, 58);
   game.load.image('droplet', 'img/droplet.png');
+  game.load.image('topPanel', 'img/topPanel.png');
 
   game.load.audio('level01', ['music/level01.mp3', 'music/level01.ogg']);
 }
@@ -65,14 +46,14 @@ function create() {
   spawnPlayer();
   droplets = game.add.group();
   createMap();
-  //  var topPanel = game.add.sprite(0, 0, 'ground');
-  //  topPanel.fixedToCamera = true;
+   var topPanel = game.add.sprite(0, 0, 'topPanel');
+   topPanel.fixedToCamera = true;
   createPowerLevelText();
   createScoreText();
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 
-  var buttonMusic = this.add.button(GAME_WINDOW_WIDTH - 80, GAME_WINDOW_HEIGHT-80, 'audio-control', clickMusic, this, 1,0,2);
+  var buttonMusic = this.add.button(3,13, 'audio-control', clickMusic, this, 1,0,2);
   buttonMusic.setFrames(1, 0, 2);
   buttonMusic.fixedToCamera = true;
 
@@ -163,7 +144,7 @@ function spawnPlayer() {
 }
 
 function createPowerLevelText(){
-  powerLevelText = game.add.text(20,20, powerLevel , {font: "48px Arial", fill: "#000"});
+  powerLevelText = game.add.text(80,20, powerLevel , {font: "48px Arial", fill: "#000"});
   powerLevelText.fixedToCamera = true;
 }
 
@@ -190,7 +171,7 @@ function createMap() {
 
   var lastStart = 0;
   var lastEnd = 0;
-  for (var i = 2; i < mapDimY - 4; i += 4) {
+  for (var i = 6; i < mapDimY - 4; i += 4) {
     var startPositionX;
     var leafLength = LEAF_LENGTH;
     do {
@@ -219,6 +200,12 @@ function createMap() {
     map.putTile(INVISIBLE_WALL, j, mapDimY - 2, mapLayer);
     map.putTile(INVISIBLE_WALL, j, mapDimY - 1, mapLayer);
   }
+  // topPanel:
+   for (var k = 0; k < mapDimX; k++) {
+     for(var l = 0; l < 4; l++){
+    map.putTile(INVISIBLE_WALL, k, l, mapLayer);
+     }
+  } 
 }
 
 function addDroplet(posX, posY){
