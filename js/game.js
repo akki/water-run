@@ -1,4 +1,10 @@
-var game = new Phaser.Game(640, 960, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
+var GAME_WINDOW_WIDTH = 640;
+var GAME_WINDOW_HEIGHT = 960;
+
+var WINDOW_WIDTH = 82;
+var WINDOW_HEIGHT = 75;
+
+var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
 var myFont, scoreText;
 var brick, windows, object, score = 0;
@@ -12,7 +18,7 @@ function preload() {
   game.load.image('background', 'img/background.png');
   game.load.image('ground', 'img/ground.png');
   game.load.image('brick', 'img/brick.png');
-  game.load.spritesheet('windows', 'img/windows.png', 82, 75);
+  game.load.spritesheet('windows', 'img/windows.png', WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
 function create() {
@@ -61,7 +67,6 @@ function spawnBrick() {
   brick.anchor.set(0.5);
   game.physics.enable(brick, Phaser.Physics.ARCADE);
   brick.body.gravity.y = 50;
-     // brick.body.velocity.y = -100;
 }
 
 function spawnWindow(xPos, yPos) {
