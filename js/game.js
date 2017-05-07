@@ -150,6 +150,7 @@ function spawnPlayer() {
   player.anchor.set(0.5);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = 800;
+  player.body.bounce.y = 0.4;
   player.body.collideWorldBounds = true;
   var ANIMATION_SPEED = 8;
   player.animations.add('idle', [6], 20, true);
