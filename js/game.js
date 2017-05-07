@@ -1,4 +1,10 @@
-var game = new Phaser.Game(640, 960, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
+var GAME_WINDOW_WIDTH = 640;
+var GAME_WINDOW_HEIGHT = 960;
+
+var WINDOW_WIDTH = 82;
+var WINDOW_HEIGHT = 75;
+
+var game = new Phaser.Game(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, Phaser.CANVAS, null, { preload: preload, create: create, update: update });
 
 var myFont, scoreText;
 var brick, object, score = 0;
@@ -27,7 +33,6 @@ function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
   spawnBrick();
-  //game.time.events.loop(500, spawnWindow);
   spawnWindows();
 }
 
@@ -49,13 +54,6 @@ function update() {
     brick.body.velocity.y = -300;
   }
 
-  // windows.forEach(function(object) {
-  //   if(object.y >= game.world.height) {
-  //     alert('GAME OVER!\n\nYour score: '+score);
-  //     location.reload();
-  //   }
-  // });
-
 }
 
 function spawnBrick() {
@@ -63,15 +61,14 @@ function spawnBrick() {
   brick.anchor.set(0.5);
   game.physics.enable(brick, Phaser.Physics.ARCADE);
   brick.body.gravity.y = 500;
-     // brick.body.velocity.y = -100;
 }
 
 function spawnWindows() {
   map = game.add.tilemap();
-  map.addTilesetImage('windows', 'windows', 82, 75);
+  map.addTilesetImage('windows', 'windows', WINDOW_WIDTH, WINDOW_HEIGHT);
   map.setCollision([0, 1, 2], true);
 
-  mapLayer = map.create('level', 8, 100, 82, 75);
+  mapLayer = map.create('level', 8, 100, WINDOW_WIDTH, WINDOW_HEIGHT);
 
   var WINDOW = 0;
   for (var i = 0; i < 20; i++) {
