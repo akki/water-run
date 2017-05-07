@@ -16,6 +16,8 @@ var player, object, powerLevel = 0;
 
 var map, mapLayer, currentTimer;
 
+var music;
+
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
   game.scale.pageAlignHorizontally = true;
@@ -26,6 +28,9 @@ function preload() {
   game.load.image('ground', 'img/ground.png');
   game.load.image('player', 'img/brick.png');
   game.load.image('windows', 'img/windows.png');
+
+  game.load.audio('level01', ['music/level01.mp3', 'music/level01.ogg']);
+
 }
 
 function create() {
@@ -38,6 +43,11 @@ function create() {
   createPowerLevel();
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
+
+  music = game.add.audio('level01');
+  music.loopFull();
+  music.play();
+
 }
 
 function updateCounter() {
