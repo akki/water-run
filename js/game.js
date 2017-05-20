@@ -4,7 +4,7 @@ var currentCheckpointArea = 1;
 var player, object, powerLevel = 0;
 var facing = 'idle';
 var map, mapLayer, droplets, currentTimer;
-var music,preloadBar;
+var music, preloadBar, buttonMusic;
 var flower;
 var dropSound;
 
@@ -59,7 +59,7 @@ function create() {
   game.camera.follow(player);
   game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
 
-  var buttonMusic = this.add.button(3,13, 'audio-control', clickMusic, this, 1,0,2);
+  buttonMusic = this.add.button(3,13, 'audio-control', clickMusic, this, 1,0,2);
   buttonMusic.setFrames(1, 0, 2);
   buttonMusic.fixedToCamera = true;
 
@@ -72,8 +72,10 @@ function create() {
 
 function clickMusic() {
   if (music.paused) {
+    buttonMusic.setFrames(1, 0, 2);
     music.resume();
   } else {
+    buttonMusic.setFrames(2, 2, 1);
     music.pause();
   }
 }
